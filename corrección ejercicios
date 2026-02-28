@@ -1,0 +1,94 @@
+"""
+PROYECTO LÓGICA: Katas de Python
+Alumno: María Quirós
+"""
+
+from functools import reduce
+import math
+
+# 20. De una lista mixta obtén solo valores int. 
+def solo_enteros(lista: list) -> list:
+    # Usamos type(x) is int para excluir booleanos (True/False)
+    return list(filter(lambda x: type(x) is int, lista))
+
+# --- PRUEBA DEL EJERCICIO 20 ---
+print(f"Ej 20: {solo_enteros([1, 'a', 2, True])}")
+
+# 23. Concatena una lista de palabras de forma eficiente.
+def unir_palabras(lista: list) -> str:
+      return "".join(lista)
+
+# 31. Solicita nombres y busca uno; si no está, lanza excepción. [cite: 48, 49]
+def buscar_usuario():
+    nombres = ["Ana", "Juan"]
+    b = input("Ej 31 - Buscar nombre (Ana/Juan): ")
+    if b not in nombres:
+        raise ValueError("Usuario no encontrado")
+    print("Encontrado")
+
+# 36. Clase UsuarioBanco: nombre, saldo, cuenta corriente y operaciones. [cite: 71, 72, 74, 75, 77, 79]
+class UsuarioBanco:
+    def __init__(self, nombre: str, saldo: float, tiene_cc: bool):
+        self.nombre = nombre
+        self.saldo = saldo
+        self.tiene_cc = tiene_cc
+
+    def agregar_dinero(self, cantidad: float):
+        self.saldo += cantidad
+
+    def retirar_dinero(self, cantidad: float):
+        if cantidad > self.saldo:
+            raise ValueError(f"Saldo insuficiente para {self.nombre}")
+        self.saldo -= cantidad
+
+    def transferir_dinero(self, emisor: 'UsuarioBanco', cantidad: float):
+        emisor.retirar_dinero(cantidad)
+        self.agregar_dinero(cantidad)
+
+# --- CASO DE USO ---
+alicia = UsuarioBanco("Alicia", 100, True)
+bob = UsuarioBanco("Bob", 50, True)
+
+bob.agregar_dinero(20)
+
+try:
+    alicia.transferir_dinero(bob, 80)
+except ValueError as e:
+    print(e) 
+
+try:
+    alicia.retirar_dinero(50)
+    print(f"Ej 36: {alicia.nombre} tiene {alicia.saldo}, {bob.nombre} tiene {bob.saldo}")
+except ValueError as e:
+    print(e)
+
+# 37. Función procesar_texto con opciones: contar, reemplazar, eliminar. [cite: 87, 96]
+def procesar_texto(texto: str, opcion: str, *args):
+    if opcion == "contar":
+        palabras = texto.split()
+        return {p: palabras.count(p) for p in set(palabras)}
+    
+    elif opcion == "reemplazar":
+        if len(args) != 2:
+            raise ValueError("Debes indicar palabra a reemplazar y nueva palabra")
+        return texto.replace(args[0], args[1])
+    
+    elif opcion == "eliminar":
+        if len(args) != 1:
+            raise ValueError("Debes indicar la palabra a eliminar")
+        return texto.replace(args[0], "")
+    
+    else:
+        raise ValueError("Opción no válida")
+
+
+# 40. Calcula área según Figura y datos. [cite: 106]
+def calcular_area(fig, datos):
+    if fig == "rectangulo":
+        return datos[0] * datos[1]
+    elif fig == "circulo":
+        return math.pi * (datos[0] ** 2)
+    elif fig == "triangulo":
+        return (datos[0] * datos[1]) / 2
+    else:
+        raise ValueError("Figura no válida")
